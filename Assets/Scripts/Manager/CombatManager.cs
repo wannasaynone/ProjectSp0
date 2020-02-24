@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using KahaGameCore.Interface;
+using System;
 
 namespace ProjectSP0.Manager
 {
@@ -19,16 +20,20 @@ namespace ProjectSP0.Manager
         private static CombatManager m_instance = null;
         private CombatManager() { }
 
-        public List<ICombatUnit> AllUnits { get { return new List<ICombatUnit>(m_allUnits); } }
-        public List<Monster> AllEnemies { get { return new List<Monster>(m_allEnemies); } }
-        public Character Player { get { return m_player; } }
+        public Action OnCombatPreStart = null;
+        public Action<ICombatUnit> OnTurnPreStart = null;
+        public Action<ICombatUnit> OnAttackPreStart = null;
+        public Action<ICombatUnit> OnDamaged = null;
+        public Action<ICombatUnit> OnAttacked = null;
+        public Action<ICombatUnit> OnTurnEnded = null;
+        public Action OnCombatEnded = null;
 
         private List<ICombatUnit> m_allUnits = null;
         private List<Monster> m_allEnemies = null;
         private Character m_player = null;
 
         private int m_currentTurnIndex = 0;
-        private StateBase m_currentCombatState = null;
+        private UIStateBase m_currentCombatState = null;
 
         public void StartCombat(Character player, List<Monster> enemy)
         {
@@ -44,8 +49,52 @@ namespace ProjectSP0.Manager
             StartNewRound();
         }
 
+        public void Attack(ICombatUnit target)
+        {
+            ICombatUnit _current = m_allUnits[m_currentTurnIndex];
+            if (_current is Monster)
+            {
+                Monster _curentMonster = _current as Monster;
+                if (!(_curentMonster.Distance.Value >= _curentMonster.MinAttackDistance
+                    && _curentMonster.Distance.Value <= _curentMonster.MaxAttackDistance))
+                {
+                    UnityEngine.Debug.Log("Can't Attack");
+                    return;
+                }
+            }
+            else if (_current is Character)
+            {
+                Monster _targetMonster = target as Monster;
+                Character _currentCharacter = _current as Character;
+                if (!(_targetMonster.Distance.Value >= _currentCharacter.GetMinAttackDistance()
+                    && _targetMonster.Distance.Value <= _currentCharacter.GetMaxAttackDistance()))
+                {
+                    UnityEngine.Debug.Log("Can't Attack");
+                    return;
+                }
+            }
+
+            ChangeTo(new Combat.AttackState(new Combat.AttackState.AttackInfo()
+            {
+                attacker = _current,
+                defender = target
+            }));
+        }
+
+        public void MoveCharatcer(int distance)
+        {
+            for(int i = 0; i < m_allEnemies.Count; i++)
+            {
+                m_allEnemies[i].Distance.Value -= distance;
+            }
+            GetPage<UI.CombatUIPage>().RefreshEnemyIcon(m_allEnemies);
+        }
+
         private void StartNewRound()
         {
+            UnityEngine.Debug.Log("Combat Start");
+            UnityEngine.Debug.Log("==============================");
+
             m_allUnits.Sort((x, y) => y.GetDex().CompareTo(x.GetDex()));
             m_currentTurnIndex = 0;
             StartTurn();
@@ -53,16 +102,15 @@ namespace ProjectSP0.Manager
 
         private void StartTurn()
         {
-            if(m_allUnits[m_currentTurnIndex] is Monster)
+            GetPage<UI.CombatUIPage>().RefreshEnemyIcon(m_allEnemies);
+            if (m_allUnits[m_currentTurnIndex] is MonsterData)
             {
                 UnityEngine.Debug.Log("Is Monster");
             }
             
             if(m_allUnits[m_currentTurnIndex] is Character)
             {
-                m_currentCombatState = new Combat.CharacterState();
-                m_currentCombatState.OnEnded += EndTurn;
-                m_currentCombatState.Start();
+                ChangeTo(new Combat.CharacterState());
             }
         }
 
@@ -79,6 +127,13 @@ namespace ProjectSP0.Manager
             {
                 StartTurn();
             }
+        }
+
+        private void ChangeTo(UIStateBase nextState)
+        {
+            m_currentCombatState?.Stop();
+            m_currentCombatState = nextState;
+            m_currentCombatState.Start();
         }
     }
 }

@@ -10,10 +10,11 @@ namespace ProjectSP0
         public enum TriggerWhen
         {
             Immediate,
-            OnCombatStarted,
-            OnTurnStarted,
-            OnAttacked,
+            OnCombatPreStart,
+            OnTurnPreStart,
+            OnAttackPreSatrt,
             OnDamaged,
+            OnAttacked,
             OnDied,
             OnTurnEnded,
             OnCombatEnded

@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 513a40d71ca53764fa9ab7f2f8a80fb3, type: 3}
-  m_Name: New Monster
+  m_Name: TestMonsetr1_Rat
   m_EditorClassIdentifier: 
-  m_defaultDistance: 0
-  m_defaultAttack: 0
+  m_name: "\u5927\u578B\u8001\u9F20"
+  m_defaultHP: 30
+  m_defaultAttack: 10
   m_defaultDefence: 0
-  m_defaultDex: -1
+  m_defaultDex: 7

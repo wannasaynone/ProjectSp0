@@ -18,7 +18,7 @@ namespace ProjectSP0.Manager
         private static GameManager m_instance = null;
         private GameManager() { }
 
-        public Character CurrentCharacter { get; private set; } = new Character();
+        public Character CurrentCharacter { get; private set; } = new Character("TestingPlayer");
 
         public Int32ValueObject CurrentDay { get; private set; } = new Int32ValueObject(1);
         public Int32ValueObject CurrentHour { get; private set; } = new Int32ValueObject(0);

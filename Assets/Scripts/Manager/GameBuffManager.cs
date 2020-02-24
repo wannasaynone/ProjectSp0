@@ -4,7 +4,13 @@ namespace ProjectSP0.Manager
 {
     public class GameBuffManager
     {
+        private readonly ICombatUnit m_owner = null;
         private List<GameBuffContainer> m_ownBuffs = new List<GameBuffContainer>();
+
+        public GameBuffManager(ICombatUnit unit)
+        {
+            m_owner = unit;
+        }
 
         public void AddBuff(GameBuff buff)
         {
@@ -20,7 +26,8 @@ namespace ProjectSP0.Manager
                 {
                     buff = buff,
                     layCount = 1,
-                    remainingTime = buff.ExistTime
+                    remainingTime = buff.ExistTime,
+                    owner = m_owner
                 }));
 
                 m_ownBuffs[m_ownBuffs.Count - 1].OnBuffTimeUp += RemoveBuff;

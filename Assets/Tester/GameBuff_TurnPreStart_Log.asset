@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68517f029e6dca140b90e29961fa9576, type: 3}
-  m_Name: GameProperties
+  m_Script: {fileID: 11500000, guid: 95b8777a09ca8ca43b5d5983f5bf1680, type: 3}
+  m_Name: GameBuff_TurnPreStart_Log
   m_EditorClassIdentifier: 
-  m_baseAttack: 10
-  m_baseDefence: 0
-  m_baseDex: 10
+  m_triggerWhen: 0
+  m_existTime: 0
+  m_commands: []

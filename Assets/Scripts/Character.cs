@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ProjectSP0.Item;
+﻿using ProjectSP0.Item;
 
 namespace ProjectSP0
 {
@@ -13,10 +12,13 @@ namespace ProjectSP0
 
         public Manager.GameBuffManager GameBuffManager { get; private set; }
 
-        public Character()
+        private readonly string m_characterName = "";
+
+        public Character(string name)
         {
             HP = new Int32ValueObject();
-            GameBuffManager = new Manager.GameBuffManager();
+            GameBuffManager = new Manager.GameBuffManager(this);
+            m_characterName = name;
         }
 
         public Character(Character from)
@@ -26,7 +28,12 @@ namespace ProjectSP0
             head = from.head;
             feet = from.feet;
             body = from.body;
-            GameBuffManager = new Manager.GameBuffManager();
+            GameBuffManager = new Manager.GameBuffManager(this);
+        }
+
+        public string GetName()
+        {
+            return m_characterName;
         }
 
         public int GetAttack()
@@ -96,6 +103,16 @@ namespace ProjectSP0
             }
 
             return _value;
+        }
+
+        public int GetMinAttackDistance()
+        {
+            return arms == null ? 0 : arms.MinAttackDistance;
+        }
+
+        public int GetMaxAttackDistance()
+        {
+            return arms == null ? 1 : arms.MaxAttackDistance;
         }
     }
 }

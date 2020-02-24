@@ -12,6 +12,7 @@ namespace ProjectSP0
             public GameBuff buff = null;
             public int remainingTime = 0;
             public int layCount = 1;
+            public ICombatUnit owner = null;
         }
 
         public event Action<GameBuffContainer> OnBuffEffectPreStart = null;
@@ -45,6 +46,47 @@ namespace ProjectSP0
                         ProcessCommands();
                         break;
                     }
+                case GameBuff.TriggerWhen.OnAttackPreSatrt:
+                    {
+                        CombatManager.Instance.OnAttackPreStart += ProcessCommands;
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnAttacked:
+                    {
+                        CombatManager.Instance.OnAttacked += ProcessCommands;
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnCombatEnded:
+                    {
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnCombatPreStart:
+                    {
+                        CombatManager.Instance.OnCombatEnded += ProcessCommands;
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnDamaged:
+                    {
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnDied:
+                    {
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnTurnEnded:
+                    {
+                        CombatManager.Instance.OnTurnEnded += ProcessCommands;
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnTurnPreStart:
+                    {
+                        CombatManager.Instance.OnTurnPreStart += ProcessCommands;
+                        break;
+                    }
+                default:
+                    {
+                        throw new NotImplementedException(info.buff.TriggerTiming.ToString());
+                    }
             }
 
             Actived = true;
@@ -59,6 +101,47 @@ namespace ProjectSP0
                     {
                         break;
                     }
+                case GameBuff.TriggerWhen.OnAttackPreSatrt:
+                    {
+                        CombatManager.Instance.OnAttackPreStart -= ProcessCommands;
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnAttacked:
+                    {
+                        CombatManager.Instance.OnAttacked -= ProcessCommands;
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnCombatEnded:
+                    {
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnCombatPreStart:
+                    {
+                        CombatManager.Instance.OnCombatEnded -= ProcessCommands;
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnDamaged:
+                    {
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnDied:
+                    {
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnTurnEnded:
+                    {
+                        CombatManager.Instance.OnTurnEnded -= ProcessCommands;
+                        break;
+                    }
+                case GameBuff.TriggerWhen.OnTurnPreStart:
+                    {
+                        CombatManager.Instance.OnTurnPreStart -= ProcessCommands;
+                        break;
+                    }
+                default:
+                    {
+                        throw new System.NotImplementedException(info.buff.TriggerTiming.ToString());
+                    }
             }
 
             Actived = false;
@@ -67,6 +150,14 @@ namespace ProjectSP0
         ~GameBuffContainer()
         {
             Deactive();
+        }
+
+        private void ProcessCommands(ICombatUnit unit)
+        {
+            if(unit == info.owner)
+            {
+                ProcessCommands();
+            }
         }
 
         private int m_currentProcesserTimes = 0;

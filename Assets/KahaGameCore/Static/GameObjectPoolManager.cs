@@ -65,7 +65,7 @@ namespace KahaGameCore.Static
                 if (_allInstances[i].MonoBehaviour == monoBehaviour)
                 {
                     _allInstances[i].MonoBehaviour.transform.position = new Vector3(10000f, 0f, 0f);
-                    _allInstances[i].actived = true;
+                    _allInstances[i].actived = false;
                 }
             }
         }
