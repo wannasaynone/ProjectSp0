@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using ProjectSP0.AI;
 
 namespace ProjectSP0
 {
@@ -13,6 +14,7 @@ namespace ProjectSP0
         public int DefaultMinAttackDistance { get { return m_defaultMinAttackDistance; } }
         public int DefaultMaxAttackDistance { get { return m_defaultMaxAttackDistance; } }
         public GameBuff[] DefaultBuffs { get { return m_defaultBuffs; } }
+        public AIBehaviourBase AIBehaviour { get { return m_defaultAI; } }
 
         [SerializeField] private string m_name = "";
         [SerializeField] private int m_defaultHP = 0;
@@ -22,5 +24,6 @@ namespace ProjectSP0
         [SerializeField] private int m_defaultMinAttackDistance = 0;
         [SerializeField] private int m_defaultMaxAttackDistance = 1;
         [SerializeField] private GameBuff[] m_defaultBuffs = null;
+        [SerializeField] private AIBehaviourBase m_defaultAI = null;
     }
 }

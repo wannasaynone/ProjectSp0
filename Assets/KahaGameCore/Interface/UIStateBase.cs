@@ -16,6 +16,7 @@ namespace KahaGameCore.Interface
             if (OnStarted != null)
             {
                 OnStarted();
+                OnStarted = null;
             }
         }
 
@@ -26,6 +27,7 @@ namespace KahaGameCore.Interface
             if (OnEnded != null)
             {
                 OnEnded();
+                OnEnded = null;
             }
 
             if (nextState != null)

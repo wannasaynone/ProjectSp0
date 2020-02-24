@@ -58,6 +58,7 @@ namespace ProjectSP0
                     }
                 case GameBuff.TriggerWhen.OnCombatEnded:
                     {
+                        CombatManager.Instance.OnCombatEnded += ProcessCommands;
                         break;
                     }
                 case GameBuff.TriggerWhen.OnCombatPreStart:
@@ -113,6 +114,7 @@ namespace ProjectSP0
                     }
                 case GameBuff.TriggerWhen.OnCombatEnded:
                     {
+                        CombatManager.Instance.OnCombatEnded -= ProcessCommands;
                         break;
                     }
                 case GameBuff.TriggerWhen.OnCombatPreStart:

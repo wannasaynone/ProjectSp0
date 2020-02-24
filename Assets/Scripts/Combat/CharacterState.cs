@@ -6,7 +6,7 @@ namespace ProjectSP0.Combat
     {
         protected override void OnStart()
         {
-            Debug.Log("Character " + Manager.GameManager.Instance.CurrentCharacter.GetName() + " Turn Started");
+            Debug.Log("Character " + Manager.GameManager.Instance.CurrentCharacter.GetName() + " Start Acting");
             Debug.Log("Number To Select Monster");
             Debug.Log("Space To Attack Selected Monster");
         }

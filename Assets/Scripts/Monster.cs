@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace ProjectSP0
+﻿namespace ProjectSP0
 {
     public class Monster : ICombatUnit
     {
@@ -10,6 +6,7 @@ namespace ProjectSP0
         public Int32ValueObject HP { get; private set; }
         public int MinAttackDistance { get { return m_defaultMinAttackDistance; } }
         public int MaxAttackDistance { get { return m_defaultMaxAttackDistance; } }
+        public AI.AIBehaviourProcesser AIBehaviour { get; private set; }
 
         public Manager.GameBuffManager GameBuffManager { get; private set; }
 
@@ -38,6 +35,7 @@ namespace ProjectSP0
                     GameBuffManager.AddBuff(monsterData.DefaultBuffs[i]);
                 }
             }
+            AIBehaviour = new AI.AIBehaviourProcesser(this, monsterData.AIBehaviour);
         }
 
         public string GetName()

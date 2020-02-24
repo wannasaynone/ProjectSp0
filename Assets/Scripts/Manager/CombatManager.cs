@@ -23,7 +23,6 @@ namespace ProjectSP0.Manager
         public Action OnCombatPreStart = null;
         public Action<ICombatUnit> OnTurnPreStart = null;
         public Action<ICombatUnit> OnAttackPreStart = null;
-        public Action<ICombatUnit> OnDamaged = null;
         public Action<ICombatUnit> OnAttacked = null;
         public Action<ICombatUnit> OnTurnEnded = null;
         public Action OnCombatEnded = null;
@@ -35,6 +34,8 @@ namespace ProjectSP0.Manager
         private int m_currentTurnIndex = 0;
         private UIStateBase m_currentCombatState = null;
 
+        private int m_ap = 0;
+
         public void StartCombat(Character player, List<Monster> enemy)
         {
             m_allUnits = new List<ICombatUnit>();
@@ -45,6 +46,8 @@ namespace ProjectSP0.Manager
 
             m_allEnemies = enemy;
             m_allUnits.AddRange(m_allEnemies);
+
+            OnCombatPreStart?.Invoke();
 
             StartNewRound();
         }
@@ -74,26 +77,87 @@ namespace ProjectSP0.Manager
                 }
             }
 
-            ChangeTo(new Combat.AttackState(new Combat.AttackState.AttackInfo()
+            OnAttackPreStart?.Invoke(_current);
+            Combat.AttackState _attackState = new Combat.AttackState(new Combat.AttackState.AttackInfo()
             {
                 attacker = _current,
                 defender = target
-            }));
+            });
+            _attackState.OnEnded += OnAttackEnded;
+
+            ChangeTo(_attackState);
+        }
+
+        private void OnAttackEnded()
+        {
+            m_currentCombatState.OnEnded -= OnAttackEnded;
+            OnAttacked?.Invoke(m_allUnits[m_currentTurnIndex]);
+            m_ap--;
+            if (m_ap > 0)
+            {
+                GoBack();
+            }
+            else
+            {
+                EndTurn();
+            }
         }
 
         public void MoveCharatcer(int distance)
         {
-            for(int i = 0; i < m_allEnemies.Count; i++)
+            for (int i = 0; i < m_allEnemies.Count; i++)
             {
-                m_allEnemies[i].Distance.Value -= distance;
+                if (m_allEnemies[i].Distance.Value - distance >= 0)
+                {
+                    m_allEnemies[i].Distance.Value -= distance;
+                }
             }
+            UnityEngine.Debug.LogFormat("{0} moved {1} distance", m_allUnits[m_currentTurnIndex].GetName(), distance);
             GetPage<UI.CombatUIPage>().RefreshEnemyIcon(m_allEnemies);
+            m_ap--;
+            if (m_ap > 0)
+            {
+                GoBack();
+            }
+            else
+            {
+                EndTurn();
+            }
+        }
+
+        public void MoveMonster(int distance)
+        {
+            ((Monster)m_allUnits[m_currentTurnIndex]).Distance.Value += distance;
+            UnityEngine.Debug.LogFormat("{0} moved {1} distance", m_allUnits[m_currentTurnIndex].GetName(), distance);
+
+            GetPage<UI.CombatUIPage>().RefreshEnemyIcon(m_allEnemies);
+            m_ap--;
+            if (m_ap > 0)
+            {
+                GoBack();
+            }
+            else
+            {
+                EndTurn();
+            }
+        }
+
+        private void GoBack()
+        {
+            if (m_allUnits[m_currentTurnIndex] is Monster)
+            {
+                ChangeTo(new Combat.MonsterState(m_allUnits[m_currentTurnIndex] as Monster));
+            }
+
+            if (m_allUnits[m_currentTurnIndex] is Character)
+            {
+                ChangeTo(new Combat.CharacterState());
+            }
         }
 
         private void StartNewRound()
         {
-            UnityEngine.Debug.Log("Combat Start");
-            UnityEngine.Debug.Log("==============================");
+            UnityEngine.Debug.Log("New Round Start");
 
             m_allUnits.Sort((x, y) => y.GetDex().CompareTo(x.GetDex()));
             m_currentTurnIndex = 0;
@@ -102,22 +166,29 @@ namespace ProjectSP0.Manager
 
         private void StartTurn()
         {
+            UnityEngine.Debug.Log("==============================");
             GetPage<UI.CombatUIPage>().RefreshEnemyIcon(m_allEnemies);
-            if (m_allUnits[m_currentTurnIndex] is MonsterData)
+
+            OnTurnPreStart?.Invoke(m_allUnits[m_currentTurnIndex]);
+
+            if (m_allUnits[m_currentTurnIndex] is Monster)
             {
-                UnityEngine.Debug.Log("Is Monster");
+                UnityEngine.Debug.LogFormat("Monster {0}'s turn", m_allUnits[m_currentTurnIndex].GetName());
+                m_ap = 1;
+                ChangeTo(new Combat.MonsterState(m_allUnits[m_currentTurnIndex] as Monster));
             }
             
             if(m_allUnits[m_currentTurnIndex] is Character)
             {
+                UnityEngine.Debug.LogFormat("Player {0}'s turn", m_allUnits[m_currentTurnIndex].GetName());
+                m_ap = 3;
                 ChangeTo(new Combat.CharacterState());
             }
         }
 
         private void EndTurn()
         {
-            m_currentCombatState.OnEnded -= EndTurn;
-
+            OnTurnEnded?.Invoke(m_allUnits[m_currentTurnIndex]);
             m_currentTurnIndex++;
             if (m_currentTurnIndex >= m_allUnits.Count)
             {
@@ -133,7 +204,7 @@ namespace ProjectSP0.Manager
         {
             m_currentCombatState?.Stop();
             m_currentCombatState = nextState;
-            m_currentCombatState.Start();
+            m_currentCombatState?.Start();
         }
     }
 }

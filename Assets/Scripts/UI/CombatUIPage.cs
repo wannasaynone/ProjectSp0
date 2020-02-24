@@ -11,7 +11,7 @@ namespace ProjectSP0.UI
         [SerializeField] private MonsterIcon m_monsterIconSource = null;
 
         private List<MonsterIcon> m_clonedMonsterIcons = new List<MonsterIcon>();
-        private Monster m_currentSelected = null;
+        private Monster m_currentSelectedMonster = null;
 
         public override bool IsShowing => throw new NotImplementedException();
 
@@ -50,7 +50,7 @@ namespace ProjectSP0.UI
 
         private void SelectMonster(Monster monster)
         {
-            m_currentSelected = monster;
+            m_currentSelectedMonster = monster;
             Debug.LogFormat("Select Monster {0}: Distance={1}", monster.GetName(), monster.Distance.Value);
         }
 
@@ -84,17 +84,25 @@ namespace ProjectSP0.UI
 
             if(Input.GetKeyDown(KeyCode.Space))
             {
-                Manager.CombatManager.Instance.Attack(m_currentSelected);
+                Manager.CombatManager.Instance.Attack(m_currentSelectedMonster);
             }
 
             if(Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 Manager.CombatManager.Instance.MoveCharatcer(-1);
+                if(m_currentSelectedMonster != null)
+                {
+                    Debug.LogFormat("Select Monster {0}: Distance={1}", m_currentSelectedMonster.GetName(), m_currentSelectedMonster.Distance.Value);
+                }
             }
 
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 Manager.CombatManager.Instance.MoveCharatcer(1);
+                if (m_currentSelectedMonster != null)
+                {
+                    Debug.LogFormat("Select Monster {0}: Distance={1}", m_currentSelectedMonster.GetName(), m_currentSelectedMonster.Distance.Value);
+                }
             }
         }
     }
