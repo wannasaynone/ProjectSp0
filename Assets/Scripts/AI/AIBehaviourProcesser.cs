@@ -13,6 +13,7 @@
 
         public void Start()
         {
+            UnityEngine.Debug.Log("Monster " + m_monster.GetName() + " start AI");
             m_behaviour.Do(m_monster);
         }
     }

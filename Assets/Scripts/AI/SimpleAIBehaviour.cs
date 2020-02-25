@@ -8,13 +8,14 @@ namespace ProjectSP0.AI
     {
         public override void Do(Monster monster)
         {
+            Debug.Log("SimpleAIBehaviour Do");
             if(monster.Distance.Value > monster.MaxAttackDistance)
             {
-                Manager.CombatManager.Instance.MoveMonster(-1);
+                Manager.CombatManager.Instance.Move(-1);
             }
             else if(monster.Distance.Value < monster.MinAttackDistance)
             {
-                Manager.CombatManager.Instance.MoveMonster(1);
+                Manager.CombatManager.Instance.Move(1);
             }
             else
             {

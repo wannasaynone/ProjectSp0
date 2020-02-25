@@ -8,6 +8,8 @@ namespace ProjectSP0.UI
 {
     public class CombatUIPage : UIView
     {
+        public bool allowPlayerInput = false;
+
         [SerializeField] private MonsterIcon m_monsterIconSource = null;
 
         private List<MonsterIcon> m_clonedMonsterIcons = new List<MonsterIcon>();
@@ -27,7 +29,8 @@ namespace ProjectSP0.UI
 
         public void RefreshEnemyIcon(List<Monster> monsters)
         {
-            for(int i = 0; i < m_clonedMonsterIcons.Count; i++)
+            Debug.Log("==============================");
+            for (int i = 0; i < m_clonedMonsterIcons.Count; i++)
             {
                 m_clonedMonsterIcons[i].OnSelected -= SelectMonster;
                 GameObjectPoolManager.Recycle(m_clonedMonsterIcons[i]);
@@ -57,6 +60,11 @@ namespace ProjectSP0.UI
         // Testing
         private void Update()
         {
+            if(!allowPlayerInput)
+            {
+                return;
+            }
+
             if(Input.GetKeyDown(KeyCode.Alpha1))
             {
                 m_clonedMonsterIcons[0].Button_Select();
@@ -89,7 +97,7 @@ namespace ProjectSP0.UI
 
             if(Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                Manager.CombatManager.Instance.MoveCharatcer(-1);
+                Manager.CombatManager.Instance.Move(-1);
                 if(m_currentSelectedMonster != null)
                 {
                     Debug.LogFormat("Select Monster {0}: Distance={1}", m_currentSelectedMonster.GetName(), m_currentSelectedMonster.Distance.Value);
@@ -98,7 +106,7 @@ namespace ProjectSP0.UI
 
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                Manager.CombatManager.Instance.MoveCharatcer(1);
+                Manager.CombatManager.Instance.Move(1);
                 if (m_currentSelectedMonster != null)
                 {
                     Debug.LogFormat("Select Monster {0}: Distance={1}", m_currentSelectedMonster.GetName(), m_currentSelectedMonster.Distance.Value);
