@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95b8777a09ca8ca43b5d5983f5bf1680, type: 3}
   m_Name: GameBuff_TurnPreStart_Log
   m_EditorClassIdentifier: 
-  m_triggerWhen: 0
-  m_existTime: 0
-  m_commands: []
+  m_triggerWhen: 7
+  m_existTime: 10
+  m_commands:
+  - {fileID: 11400000, guid: ee40aa13fa51bd247b7b0ca813c15741, type: 2}

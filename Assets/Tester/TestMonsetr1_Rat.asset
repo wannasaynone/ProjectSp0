@@ -19,5 +19,6 @@ MonoBehaviour:
   m_defaultDex: 7
   m_defaultMinAttackDistance: 0
   m_defaultMaxAttackDistance: 1
-  m_defaultBuffs: []
+  m_defaultBuffs:
+  - {fileID: 11400000, guid: 868713728aa3176409a73d96bc6094d0, type: 2}
   m_defaultAI: {fileID: 11400000, guid: 1956d8bf2fb959441a8869cb6813f140, type: 2}
