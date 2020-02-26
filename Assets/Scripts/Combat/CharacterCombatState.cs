@@ -21,18 +21,22 @@ namespace ProjectSP0.Combat
 
             Monster _targetMonster = target as Monster;
             if (!(_targetMonster.Distance.Value >= m_actor.GetMinAttackDistance()
-                && _targetMonster.Distance.Value <= m_actor.GetMaxAttackDistance()))
+                && _targetMonster.Distance.Value <= m_actor.GetMaxAttackDistance())
+                && target.HP.Value > 0)
             {
                 UnityEngine.Debug.Log("Can't Attack");
+                WaitPlayerCommand();
                 return;
             }
 
-            onAttackEnded += DecreaseAP;
+            // for letting DecreaseAP work first
+            Action _onAttacked = DecreaseAP;
+            _onAttacked += onAttackEnded;
             new AttackProcesser().Start(new AttackProcesser.AttackInfo
             {
                 attacker = m_actor,
                 defender = target,
-                onAttackEnded = onAttackEnded
+                onAttackEnded = _onAttacked
             });
         }
 

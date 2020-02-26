@@ -2,6 +2,8 @@
 {
     public class Monster : ICombatUnit
     {
+        public event System.Action<ICombatUnit> OnDied = null;
+
         public Int32ValueObject Distance { get; private set; }
         public Int32ValueObject HP { get; private set; }
         public int MinAttackDistance { get { return m_defaultMinAttackDistance; } }
@@ -21,6 +23,7 @@
         {
             Distance = new Int32ValueObject(distance);
             HP = new Int32ValueObject(monsterData.DefaultHP);
+            HP.OnValueChanged += OnHPChanged;
             m_defaultDefence = monsterData.DefaultDefence;
             m_defaultAttack = monsterData.DefaultAttack;
             m_defaultDex = monsterData.DefaultDex;
@@ -36,6 +39,11 @@
                 }
             }
             AIBehaviour = new AI.AIBehaviourProcesser(this, monsterData.AIBehaviour);
+        }
+
+        ~Monster()
+        {
+            HP.OnValueChanged -= OnHPChanged;
         }
 
         public string GetName()
@@ -56,6 +64,14 @@
         public int GetDex()
         {
             return m_defaultDex;
+        }
+
+        private void OnHPChanged(int value)
+        {
+            if (value <= 0)
+            {
+                OnDied?.Invoke(this);
+            }
         }
     }
 }

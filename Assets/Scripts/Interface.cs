@@ -8,5 +8,7 @@
         int GetDefence();
         int GetDex();
         Manager.GameBuffManager GameBuffManager { get; }
+
+        event System.Action<ICombatUnit> OnDied;
     }
 }

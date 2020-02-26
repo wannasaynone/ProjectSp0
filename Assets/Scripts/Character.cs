@@ -4,6 +4,8 @@ namespace ProjectSP0
 {
     public class Character : ICombatUnit
     {
+        public event System.Action<ICombatUnit> OnDied = null;
+
         public Int32ValueObject HP { get; private set; }
         public Equipment arms = null;
         public Equipment head = null;
@@ -16,7 +18,8 @@ namespace ProjectSP0
 
         public Character(string name)
         {
-            HP = new Int32ValueObject();
+            HP = new Int32ValueObject(100);
+            HP.OnValueChanged += OnHPChanged;
             GameBuffManager = new Manager.GameBuffManager(this);
             m_characterName = name;
         }
@@ -24,11 +27,17 @@ namespace ProjectSP0
         public Character(Character from)
         {
             HP = new Int32ValueObject(from.HP.Value);
+            HP.OnValueChanged += OnHPChanged;
             arms = from.arms;
             head = from.head;
             feet = from.feet;
             body = from.body;
             GameBuffManager = new Manager.GameBuffManager(this);
+        }
+
+        ~Character()
+        {
+            HP.OnValueChanged -= OnHPChanged;
         }
 
         public string GetName()
@@ -113,6 +122,14 @@ namespace ProjectSP0
         public int GetMaxAttackDistance()
         {
             return arms == null ? 1 : arms.MaxAttackDistance;
+        }
+
+        private void OnHPChanged(int value)
+        {
+            if(value <= 0)
+            {
+                OnDied?.Invoke(this);
+            }
         }
     }
 }

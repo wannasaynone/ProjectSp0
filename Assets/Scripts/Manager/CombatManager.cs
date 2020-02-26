@@ -24,6 +24,7 @@ namespace ProjectSP0.Manager
         public event Action<ICombatUnit> OnTurnPreStart = null;
         public event Action<ICombatUnit> OnAttackPreStart = null;
         public event Action<ICombatUnit> OnAttacked = null;
+        public event Action<ICombatUnit> OnCombatUnitDied = null;
         public event Action<ICombatUnit> OnTurnEnded = null;
         public event Action OnCombatEnded = null;
 
@@ -47,6 +48,11 @@ namespace ProjectSP0.Manager
 
             m_allEnemies = enemy;
             m_allUnits.AddRange(m_allEnemies);
+
+            for(int i = 0; i < m_allUnits.Count; i++)
+            {
+                m_allUnits[i].OnDied += OnUnitDied;
+            }
 
             OnCombatPreStart?.Invoke();
 
@@ -75,6 +81,12 @@ namespace ProjectSP0.Manager
             m_currentState.Move(distance);
         }
 
+        private void OnUnitDied(ICombatUnit unit)
+        {
+            UnityEngine.Debug.Log(unit.GetName() + " died");
+            OnCombatUnitDied?.Invoke(unit);
+        }
+
         private void StartNewRound()
         {
             UnityEngine.Debug.Log("New Round Start");
@@ -86,29 +98,61 @@ namespace ProjectSP0.Manager
 
         private void StartTurn()
         {
+            if(m_allUnits[m_currentTurnIndex].HP.Value <= 0)
+            {
+                EndTurn();
+                return;
+            }
+
             GetPage<UI.CombatUIPage>().RefreshEnemyIcon(m_allEnemies);
             OnTurnPreStart?.Invoke(m_allUnits[m_currentTurnIndex]);
-            SetCurrentState();
+            m_currentState = GetCurrentState();
             m_currentState.StartTurn(EndTurn);
         }
 
-        private void SetCurrentState()
+        private Combat.CombatStateBase GetCurrentState()
         {
             if (m_allUnits[m_currentTurnIndex] is Character)
             {
-                m_currentState = new Combat.CharacterCombatState(m_player, m_allEnemies);
+                return new Combat.CharacterCombatState(m_player, m_allEnemies);
             }
             else if (m_allUnits[m_currentTurnIndex] is Monster)
             {
-                m_currentState = new Combat.MonsterCombatState(m_allUnits[m_currentTurnIndex] as Monster, m_allEnemies);
+                return new Combat.MonsterCombatState(m_allUnits[m_currentTurnIndex] as Monster, m_allEnemies);
             }
+
+            return null;
         }
 
         private void EndTurn()
         {
             UnityEngine.Debug.Log("End Turn");
             OnTurnEnded?.Invoke(m_allUnits[m_currentTurnIndex]);
+
+            if (m_player.HP.Value <= 0)
+            {
+                UnityEngine.Debug.Log("Combat End: Player Died");
+                EndCombat();
+                return;
+            }
+
+            for (int i = 0; i < m_allEnemies.Count; i++)
+            {
+                if(m_allEnemies[i].HP.Value > 0)
+                {
+                    break;
+                }
+
+                if(i == m_allEnemies.Count - 1)
+                {
+                    UnityEngine.Debug.Log("Combat End: Player Win");
+                    EndCombat();
+                    return;
+                }
+            }
+
             m_currentTurnIndex++;
+
             if (m_currentTurnIndex >= m_allUnits.Count)
             {
                 StartNewRound();
@@ -117,6 +161,16 @@ namespace ProjectSP0.Manager
             {
                 StartTurn();
             }
+        }
+
+        private void EndCombat()
+        {
+            for (int i = 0; i < m_allUnits.Count; i++)
+            {
+                m_allUnits[i].OnDied -= OnUnitDied;
+            }
+
+            OnCombatEnded?.Invoke();
         }
     }
 }

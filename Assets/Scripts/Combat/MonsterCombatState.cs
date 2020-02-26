@@ -26,12 +26,14 @@ namespace ProjectSP0.Combat
                 return;
             }
 
-            onAttackEnded += DecreaseAP;
+            // for letting DecreaseAP work first
+            Action _onAttacked = DecreaseAP;
+            _onAttacked += onAttackEnded;
             new AttackProcesser().Start(new AttackProcesser.AttackInfo
             {
                 attacker = m_actor,
                 defender = target,
-                onAttackEnded = onAttackEnded
+                onAttackEnded = _onAttacked
             });
         }
 
@@ -50,21 +52,30 @@ namespace ProjectSP0.Combat
             m_onTurnEnded = onTurnEnded;
             CurrentAP = 1;
             Debug.Log("AP=" + CurrentAP);
-            m_actor.AIBehaviour.Start();
+
+            KahaGameCore.Static.TimerManager.Schedule(1f,
+                delegate
+                {
+                    m_actor.AIBehaviour.Start();
+                });
         }
 
         private void DecreaseAP()
         {
             CurrentAP--;
             Debug.Log("AP=" + CurrentAP);
-            if (CurrentAP <= 0)
+            KahaGameCore.Static.TimerManager.Schedule(1f,
+            delegate
             {
-                m_onTurnEnded?.Invoke();
-            }
-            else
-            {
-                m_actor.AIBehaviour.Start();
-            }
+                if (CurrentAP <= 0)
+                {
+                    m_onTurnEnded?.Invoke();
+                }
+                else
+                {
+                    m_actor.AIBehaviour.Start();
+                }
+            });
         }
     }
 }

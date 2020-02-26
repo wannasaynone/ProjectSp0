@@ -24,7 +24,7 @@ namespace ProjectSP0.Combat
             UnityEngine.Debug.Log("Dmg=" + _dmg);
             attackInfo.defender.HP.Value -= _dmg;
 
-            KahaGameCore.Static.TimerManager.Schedule(0.5f, attackInfo.onAttackEnded);
+            KahaGameCore.Static.TimerManager.Schedule(1f, attackInfo.onAttackEnded);
         }
     }
 }
