@@ -29,7 +29,6 @@ namespace ProjectSP0.UI
 
         public void RefreshEnemyIcon(List<Monster> monsters)
         {
-            Debug.Log("==============================");
             for (int i = 0; i < m_clonedMonsterIcons.Count; i++)
             {
                 m_clonedMonsterIcons[i].OnSelected -= SelectMonster;
@@ -43,12 +42,6 @@ namespace ProjectSP0.UI
                 _cloneIcon.OnSelected += SelectMonster;
                 m_clonedMonsterIcons.Add(_cloneIcon);
             }
-
-            for (int i = 0; i < monsters.Count; i++)
-            {
-                Debug.LogFormat("---Monster {0}: Distance={1}", monsters[i].GetName(), monsters[i].Distance.Value);
-            }
-            Debug.Log("==============================");
         }
 
         private void SelectMonster(Monster monster)
@@ -63,6 +56,11 @@ namespace ProjectSP0.UI
             if(!allowPlayerInput)
             {
                 return;
+            }
+
+            if(Input.GetKeyDown(KeyCode.I))
+            {
+                Manager.CombatManager.Instance.Debug_ShowAllMonsterDistanceInfo();
             }
 
             if(Input.GetKeyDown(KeyCode.Alpha1))

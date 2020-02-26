@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,14 +25,12 @@ namespace ProjectSP0.Combat
                 return;
             }
 
-            // for letting DecreaseAP work first
-            Action _onAttacked = DecreaseAP;
-            _onAttacked += onAttackEnded;
+            onAttackEnded = DecreaseAP;
             new AttackProcesser().Start(new AttackProcesser.AttackInfo
             {
                 attacker = m_actor,
                 defender = target,
-                onAttackEnded = _onAttacked
+                onAttackEnded = onAttackEnded
             });
         }
 
@@ -50,18 +47,33 @@ namespace ProjectSP0.Combat
         {
             Debug.LogFormat("Monster {0}'s turn", m_actor.GetName());
             m_onTurnEnded = onTurnEnded;
-            CurrentAP = 1;
-            Debug.Log("AP=" + CurrentAP);
 
-            KahaGameCore.Static.TimerManager.Schedule(1f,
-                delegate
-                {
-                    m_actor.AIBehaviour.Start();
-                });
+            if(m_actor.HP.Value > 0)
+            {
+                CurrentAP = 1;
+                Debug.Log("AP=" + CurrentAP);
+
+                KahaGameCore.Static.TimerManager.Schedule(1f,
+                    delegate
+                    {
+                        m_actor.AIBehaviour.Start();
+                    });
+            }
+            else
+            {
+                Debug.Log("Aleady Died, Ending Turn...");
+                m_onTurnEnded?.Invoke();
+            }
         }
 
         private void DecreaseAP()
         {
+            if(m_actor.HP.Value <= 0 || Manager.GameManager.Instance.CurrentCharacter.HP.Value <= 0)
+            {
+                m_onTurnEnded?.Invoke();
+                return;
+            }
+
             CurrentAP--;
             Debug.Log("AP=" + CurrentAP);
             KahaGameCore.Static.TimerManager.Schedule(1f,

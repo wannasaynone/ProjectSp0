@@ -22,21 +22,19 @@ namespace ProjectSP0.Combat
             Monster _targetMonster = target as Monster;
             if (!(_targetMonster.Distance.Value >= m_actor.GetMinAttackDistance()
                 && _targetMonster.Distance.Value <= m_actor.GetMaxAttackDistance())
-                && target.HP.Value > 0)
+                || target.HP.Value <= 0)
             {
                 UnityEngine.Debug.Log("Can't Attack");
                 WaitPlayerCommand();
                 return;
             }
 
-            // for letting DecreaseAP work first
-            Action _onAttacked = DecreaseAP;
-            _onAttacked += onAttackEnded;
+            onAttackEnded += DecreaseAP;
             new AttackProcesser().Start(new AttackProcesser.AttackInfo
             {
                 attacker = m_actor,
                 defender = target,
-                onAttackEnded = _onAttacked
+                onAttackEnded = onAttackEnded
             });
         }
 
@@ -73,6 +71,12 @@ namespace ProjectSP0.Combat
 
         private void DecreaseAP()
         {
+            if(m_actor.HP.Value <= 0)
+            {
+                m_onTurnEnded?.Invoke();
+                return;
+            }
+
             CurrentAP--;
             UnityEngine.Debug.Log("AP=" + CurrentAP);
             if (CurrentAP <= 0)

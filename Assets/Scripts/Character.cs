@@ -18,7 +18,7 @@ namespace ProjectSP0
 
         public Character(string name)
         {
-            HP = new Int32ValueObject(100);
+            HP = new Int32ValueObject(100000);
             HP.OnValueChanged += OnHPChanged;
             GameBuffManager = new Manager.GameBuffManager(this);
             m_characterName = name;

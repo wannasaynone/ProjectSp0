@@ -59,6 +59,16 @@ namespace ProjectSP0.Manager
             StartNewRound();
         }
 
+        public void Debug_ShowAllMonsterDistanceInfo()
+        {
+            UnityEngine.Debug.Log("==============================");
+            for (int i = 0; i < m_allEnemies.Count; i++)
+            {
+                UnityEngine.Debug.LogFormat("---Monster {0}: Distance={1}", m_allEnemies[i].GetName(), m_allEnemies[i].Distance.Value);
+            }
+            UnityEngine.Debug.Log("==============================");
+        }
+
         public void Attack(ICombatUnit target)
         {
             if(target == null)
@@ -98,12 +108,7 @@ namespace ProjectSP0.Manager
 
         private void StartTurn()
         {
-            if(m_allUnits[m_currentTurnIndex].HP.Value <= 0)
-            {
-                EndTurn();
-                return;
-            }
-
+            UnityEngine.Debug.Log("==============================");
             GetPage<UI.CombatUIPage>().RefreshEnemyIcon(m_allEnemies);
             OnTurnPreStart?.Invoke(m_allUnits[m_currentTurnIndex]);
             m_currentState = GetCurrentState();
