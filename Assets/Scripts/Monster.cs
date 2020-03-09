@@ -6,8 +6,8 @@
 
         public Int32ValueObject Distance { get; private set; }
         public Int32ValueObject HP { get; private set; }
-        public int MinAttackDistance { get { return m_defaultMinAttackDistance; } }
-        public int MaxAttackDistance { get { return m_defaultMaxAttackDistance; } }
+        public int MinAttackDistance { get; private set; } 
+        public int MaxAttackDistance { get; private set; }
         public AI.AIBehaviourProcesser AIBehaviour { get; private set; }
 
         public Manager.GameBuffManager GameBuffManager { get; private set; }
@@ -16,10 +16,8 @@
         private int m_defaultAttack = 0;
         private int m_defaultDefence = 0;
         private int m_defaultDex = 0;
-        private int m_defaultMinAttackDistance = 0;
-        private int m_defaultMaxAttackDistance = 0;
 
-        public Monster(MonsterData monsterData, int distance)
+        public Monster(MonsterRawData monsterData, int distance)
         {
             Distance = new Int32ValueObject(distance);
             HP = new Int32ValueObject(monsterData.DefaultHP);
@@ -27,8 +25,8 @@
             m_defaultDefence = monsterData.DefaultDefence;
             m_defaultAttack = monsterData.DefaultAttack;
             m_defaultDex = monsterData.DefaultDex;
-            m_defaultMinAttackDistance = monsterData.DefaultMinAttackDistance;
-            m_defaultMaxAttackDistance = monsterData.DefaultMaxAttackDistance;
+            MinAttackDistance = monsterData.DefaultMinAttackDistance;
+            MaxAttackDistance = monsterData.DefaultMaxAttackDistance;
             m_name = monsterData.MonsterName;
             GameBuffManager = new Manager.GameBuffManager(this);
             if(monsterData.DefaultBuffs != null && monsterData.DefaultBuffs.Length != 0)

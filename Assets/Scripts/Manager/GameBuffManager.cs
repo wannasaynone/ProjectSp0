@@ -6,10 +6,18 @@ namespace ProjectSP0.Manager
     {
         private readonly ICombatUnit m_owner = null;
         private List<GameBuffContainer> m_ownBuffs = new List<GameBuffContainer>();
+        private List<TemporaryStatus> m_tempStatus = new List<TemporaryStatus>();
 
         public GameBuffManager(ICombatUnit unit)
         {
             m_owner = unit;
+        }
+
+        public void AddTempValue(TemporaryStatus.TemporaryStatusInfo info)
+        {
+            TemporaryStatus _newTemp = new TemporaryStatus(info);
+            _newTemp.OnTimeUp += RemoveTempValue;
+            m_tempStatus.Add(_newTemp);
         }
 
         public void AddBuff(GameBuff buff)
@@ -60,6 +68,12 @@ namespace ProjectSP0.Manager
                     m_ownBuffs.Remove(_buffContainer);
                 }
             }
+        }
+
+        private void RemoveTempValue(TemporaryStatus status)
+        {
+            status.OnTimeUp -= RemoveTempValue;
+            m_tempStatus.Remove(status);
         }
     }
 }

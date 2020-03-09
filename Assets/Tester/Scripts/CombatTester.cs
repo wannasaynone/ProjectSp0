@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 public class CombatTester : MonoBehaviour
 {
-    [SerializeField] MonsterData[] monsterDatas = null;
+    [SerializeField] MonsterRawData[] monsterDatas = null;
 
     private void Start()
     {

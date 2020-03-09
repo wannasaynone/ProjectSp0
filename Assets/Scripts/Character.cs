@@ -47,7 +47,7 @@ namespace ProjectSP0
 
         public int GetAttack()
         {
-            int _value = 0;
+            int _value = GameProperties.Instance.BaseAttack;
             if(arms != null)
             {
                 _value += arms.AddAttack;
@@ -65,7 +65,7 @@ namespace ProjectSP0
                 _value += feet.AddAttack;
             }
 
-            return _value <= 0 ? GameProperties.Instance.BaseAttack : _value;
+            return _value <= GameProperties.Instance.BaseAttack ? GameProperties.Instance.BaseAttack : _value;
         }
 
         public int GetDefence()
@@ -88,7 +88,7 @@ namespace ProjectSP0
                 _value += feet.AddDefence;
             }
 
-            return _value;
+            return _value <= GameProperties.Instance.BaseDefence ? GameProperties.Instance.BaseDefence : _value;
         }
 
         public int GetDex()
@@ -111,7 +111,7 @@ namespace ProjectSP0
                 _value += feet.AddDex;
             }
 
-            return _value;
+            return _value <= GameProperties.Instance.BaseDex ? GameProperties.Instance.BaseDex : _value;
         }
 
         public int GetMinAttackDistance()

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using KahaGameCore.Interface;
 using System;
 
 namespace ProjectSP0.Manager

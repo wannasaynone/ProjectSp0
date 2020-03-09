@@ -4,7 +4,7 @@ using ProjectSP0.AI;
 namespace ProjectSP0
 {
     [CreateAssetMenu(menuName = "Game Data/Monster")]
-    public class MonsterData : ScriptableObject
+    public class MonsterRawData : ScriptableObject
     {
         public string MonsterName { get { return m_name; } }
         public int DefaultHP { get { return m_defaultHP; } }

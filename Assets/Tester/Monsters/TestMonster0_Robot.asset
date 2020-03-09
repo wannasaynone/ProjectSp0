@@ -15,7 +15,7 @@ MonoBehaviour:
   m_name: "\u7206\u8D70\u7684\u5EE2\u68C4\u6A5F\u5668\u4EBA"
   m_defaultHP: 100
   m_defaultAttack: 45
-  m_defaultDefence: 0
+  m_defaultDefence: 35
   m_defaultDex: 5
   m_defaultMinAttackDistance: 0
   m_defaultMaxAttackDistance: 1
